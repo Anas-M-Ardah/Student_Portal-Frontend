@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f4f6f9;
+}
+
+.login-wrapper {
+  background-color: #f4f6f9;
+}
+
+.card {
+  border: none;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.card-header {
+  background: linear-gradient(to right, #4e73df 0%, #224abe 100%);
+  color: white;
+}
+
+.card-header h2 {
+  font-weight: 600;
+}
+
+.btn-group .btn {
+  transition: all 0.3s ease;
+}
+
+.form-floating > .form-control {
+  height: 50px;
+}
+
+.form-floating > label {
+  padding-top: 1rem;
+  opacity: 0.7;
+}
+
+.btn-primary {
+  background: linear-gradient(to right, #4e73df 0%, #224abe 100%);
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 17px rgba(0, 0, 0, 0.2);
+}
+
+.card-footer a {
+  color: #4e73df;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.card-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .card {
+    margin: 0 15px;
+  }
+}
+
+.password-container {
+  position: relative;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  z-index: 10;
+}
+
+.password-toggle:focus {
+  box-shadow: none;
+}
