@@ -96,23 +96,79 @@ class AuthService {
     async teacherLogin(email, password) {
         try {
             const response = await api.post('/teachers/login', { email, password });
+            console.log(response.data);
 
             if (response.data.success) {
                 this.setAuthData('teacher', response.data);
                 return response.data;
             }
 
-            throw new Error(response.data.message || 'Teacher login failed');
+            throw new Error('Teacher login failed');
         } catch (error) {
-            this.handleAuthError(error);
+            // Check if error has a response from the server
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                switch (error.response.status) {
+                    case 400:
+                        throw new Error('Invalid input. Please check your email and password.');
+
+                    case 401:
+                        // Unauthorized - could be invalid credentials
+                        throw new Error('Invalid email or password. Please try again.');
+
+                    case 403:
+                        // Forbidden - could be account not activated or blocked
+                        throw new Error('Access denied. Your account may be inactive or blocked.');
+
+                    case 404:
+                        // Not found - could be user doesn't exist
+                        throw new Error('Student account not found. Please register.');
+
+                    case 422:
+                        // Unprocessable Entity - validation errors
+                        const validationErrors = error.response.data.errors;
+                        if (validationErrors) {
+                            const errorMessages = validationErrors.map(err => err.msg).join(', ');
+                            throw new Error(`Validation failed: ${errorMessages}`);
+                        }
+                        throw new Error('Validation failed. Please check your input.');
+
+                    case 429:
+                        // Too Many Requests
+                        throw new Error('Too many login attempts. Please try again later.');
+
+                    case 500:
+                        // Internal Server Error
+                        throw new Error('Server error. Please try again later.');
+
+                    case 503:
+                        // Service Unavailable
+                        throw new Error('Service is currently unavailable. Please try again later.');
+
+                    default:
+                        // Generic error for any other status code
+                        throw new Error(
+                            error.response.data.message ||
+                            'An unexpected error occurred during login.'
+                        );
+                }
+            } else if (error.request) {
+                // The request was made but no response was received
+                throw new Error('No response from server. Please check your internet connection.');
+            } else {
+                // Something happened in setting up the request
+                throw new Error('Error setting up the login request. Please try again.');
+            }
         }
     }
+
 
     // Set Authentication Data
     setAuthData(userType, data) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         localStorage.setItem('userType', userType);
+        localStorage.setItem('name', data.name);
     }
 
     // Handle Authentication Errors
